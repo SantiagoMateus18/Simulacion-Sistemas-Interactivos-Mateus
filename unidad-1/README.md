@@ -21,8 +21,356 @@ Bitacora de trabajo de la Unidad 1 del curso de Simulacion.
 
 ## Sesion 4 - Evaluacion y presentacion
 
-- Resultado final:
-- Enlace al prototipo:
+### - Resultado final:
+Sketch:
+```js
+/*
+  RETO 07 — "Navegar la incertidumbre"
+  Tema: sedimentación / terreno geológico infinito.
+
+  Conceptos de la unidad usados:
+  - Ruido Perlin       -> textura de fondo y ondulación de las capas
+  - Caminata aleatoria  -> deriva horizontal de las partículas al caer
+  - Distribución normal -> suavizado del terreno hacia un promedio (normalidad)
+  - Lévy flight         -> fractura/desprendimiento que dispara el click (excepción)
+
+  Los 5 momentos NO están en escenas separadas: coexisten todo el tiempo
+  como capas de un mismo sistema. Lo que cambia es cuál predomina.
+*/
+
+// ---------- Configuración del lienzo 9:16 ----------
+let W = 540;
+let H = 960;
+let scaleFactor = 1;
+
+// ---------- Terreno ----------
+let terrain;              // p5.Graphics: acumula la sedimentación (permanente)
+let cols = 90;             // columnas del "mapa de alturas"
+let surfaceHeight = [];    // altura acumulada por columna (desde abajo)
+let colWidth;
+
+// ---------- Partículas (sedimento cayendo) ----------
+let particles = [];
+const BASE_PARTICLE_RATE = 2; // cuántas partículas nuevas por frame en reposo
+
+// ---------- Momento 2: Tendencia ----------
+let driftBias = 0;        // sesgo direccional que se consolida lentamente
+let biasStrength = 0;     // 0 = todavía todo es "posibilidad", 1 = tendencia fuerte
+
+// ---------- Momento 4: Excepción (Lévy) ----------
+let flashEvents = [];      // efectos visuales temporales de fracturas
+
+// ---------- Momento 5: Influencia ----------
+let influenceRadius = 140;
+
+// ---------- Ciclo de pausa y reinicio ----------
+let state = 'running';       // 'running' | 'resetting'
+const RESET_HEIGHT_RATIO = 0.55; // a qué altura se congela y empieza el reinicio
+const RESET_SHIFT = 10;          // velocidad del scroll durante el reinicio
+let resetScrolled = 0;
+
+// paleta de sedimento (tonos cálidos / minerales)
+const PALETTE = [
+  [64, 42, 33],
+  [92, 58, 38],
+  [122, 78, 45],
+  [156, 104, 56],
+  [184, 132, 74],
+  [201, 164, 101],
+];
+
+function setup() {
+  let cnv = createCanvas(W, H);
+  cnv.parent(document.querySelector('main'));
+  pixelDensity(1);
+  fitCanvasToWindow();
+
+  terrain = createGraphics(W, H);
+  terrain.pixelDensity(1);
+  terrain.noStroke();
+  terrain.background(10, 8, 6);
+
+  colWidth = W / cols;
+  for (let i = 0; i < cols; i++) surfaceHeight[i] = random(6, 14);
+
+  noStroke();
+}
+
+function windowResized() {
+  fitCanvasToWindow();
+}
+
+function fitCanvasToWindow() {
+  // mantiene el marco 9:16 dentro de cualquier pantalla (letterbox)
+  let s = min(windowWidth / W, windowHeight / H);
+  scaleFactor = s;
+  let cnv = document.querySelector('canvas');
+  if (cnv) {
+    cnv.style.width = (W * s) + 'px';
+    cnv.style.height = (H * s) + 'px';
+  }
+}
+
+function draw() {
+  if (state === 'running') {
+    // ---------- 1) Actualiza la "tendencia" (Momento 2) ----------
+    // Empieza cerca de cero (posibilidad total) y se va consolidando
+    // muy lentamente con ruido Perlin: nunca es una decisión, es una deriva.
+    driftBias = (noise(frameCount * 0.0015) - 0.5) * 2.4;
+    biasStrength = constrain(biasStrength + 0.00025, 0, 0.85);
+
+    // ---------- 2) Genera nuevas partículas de sedimento ----------
+    let spawnRate = BASE_PARTICLE_RATE + (mouseIsInsideCanvas() ? 2 : 0);
+    for (let i = 0; i < spawnRate; i++) spawnParticle();
+
+    // ---------- 3) Actualiza y deposita partículas ----------
+    for (let i = particles.length - 1; i >= 0; i--) {
+      let p = particles[i];
+      updateParticle(p);
+      if (p.settled) {
+        depositParticle(p);
+        particles.splice(i, 1);
+      } else if (p.pos.y > H + 20) {
+        particles.splice(i, 1); // se perdió, no debería pasar casi nunca
+      }
+    }
+
+    // ---------- 4) Cada tanto, "normalidad": suaviza el terreno ----------
+    if (frameCount % 90 === 0) smoothTowardsMean();
+
+    // ---------- 5) ¿Llegó al límite? Congela todo y empieza el reinicio ----------
+    let maxH = Math.max(...surfaceHeight);
+    if (maxH > H * RESET_HEIGHT_RATIO) {
+      startReset();
+    }
+  } else if (state === 'resetting') {
+    // nada cae, nada se genera: solo el scroll hasta quedar todo negro
+    doResetStep();
+  }
+
+  // ---------- Dibuja ----------
+  image(terrain, 0, 0);
+  if (state === 'running') drawParticles();
+  drawFlashEvents();
+}
+
+// =====================================================================
+// PARTÍCULAS
+// =====================================================================
+
+function spawnParticle() {
+  particles.push({
+    pos: createVector(random(W), -random(20)),
+    vx: 0,
+    speed: random(1.2, 2.4),
+    col: floor(random(PALETTE.length)),
+    settled: false,
+  });
+}
+
+function updateParticle(p) {
+  // Momento 1 (Posibilidad): componente totalmente aleatoria, uniforme.
+  let randomWalkStep = random(-1, 1);
+
+  // Momento 2 (Tendencia): se mezcla con el sesgo consolidado driftBias.
+  // biasStrength controla cuánto ya "pesa" la tendencia sobre el azar puro.
+  let biased = lerp(randomWalkStep, driftBias, biasStrength);
+
+  // Momento 5 (Influencia): la cercanía del visitante curva la caída
+  // hacia (o en contra de) su posición, sin definirla del todo.
+  let d = dist(p.pos.x, p.pos.y, mouseX, mouseY);
+  let influence = 0;
+  if (d < influenceRadius) {
+    let strength = map(d, 0, influenceRadius, 0.9, 0);
+    let dirSign = mouseX > p.pos.x ? 1 : -1;
+    influence = dirSign * strength;
+  }
+
+  p.vx = lerp(p.vx, biased + influence, 0.08);
+  p.pos.x += p.vx;
+  p.pos.y += p.speed;
+  p.pos.x = constrain(p.pos.x, 0, W - 1);
+
+  let colIndex = floor(p.pos.x / colWidth);
+  colIndex = constrain(colIndex, 0, cols - 1);
+  let surfaceY = H - surfaceHeight[colIndex];
+
+  if (p.pos.y >= surfaceY) {
+    p.settled = true;
+    p.colIndex = colIndex;
+    p.landY = surfaceY;
+  }
+}
+
+function depositParticle(p) {
+  // el depósito es pequeño y aleatorio: la suma de muchos de estos
+  // pequeños incrementos es lo que genera el perfil "normal" del terreno.
+  let amount = random(0.4, 1.3);
+  surfaceHeight[p.colIndex] += amount;
+
+  let x = p.colIndex * colWidth;
+  // modulo "seguro": nunca da negativo, incluso si surfaceHeight fuera negativo
+  let raw = floor(surfaceHeight[p.colIndex] / 22) % PALETTE.length;
+  let bandIndex = (raw + PALETTE.length) % PALETTE.length;
+  let c = PALETTE[bandIndex];
+
+  terrain.fill(c[0], c[1], c[2], 210);
+  let wob = map(noise(x * 0.01, frameCount * 0.002), 0, 1, -2, 2);
+  terrain.ellipse(x + colWidth / 2 + wob, p.landY, colWidth * 1.4, 4);
+}
+
+function drawParticles() {
+  noStroke();
+  for (let p of particles) {
+    let c = PALETTE[p.col];
+    fill(c[0] + 30, c[1] + 20, c[2] + 10, 230);
+    circle(p.pos.x, p.pos.y, 3.2);
+  }
+}
+
+// =====================================================================
+// MOMENTO 3: NORMALIDAD
+// =====================================================================
+
+function smoothTowardsMean() {
+  let mean = surfaceHeight.reduce((a, b) => a + b, 0) / cols;
+  for (let i = 0; i < cols; i++) {
+    // empuja suavemente cada columna hacia el promedio, con ruido
+    // gaussiano: la mayoría de las columnas quedan cerca de lo habitual.
+    let pull = randomGaussian(0, 0.6);
+    surfaceHeight[i] = lerp(surfaceHeight[i], mean, 0.03) + pull;
+    surfaceHeight[i] = max(surfaceHeight[i], 2);
+  }
+}
+
+// =====================================================================
+// MOMENTO 4: EXCEPCIÓN (Lévy flight) — disparado por click
+// =====================================================================
+
+function mousePressed() {
+  if (state !== 'running') return;
+  if (!mouseIsInsideCanvas()) return;
+  triggerLevyEvent(mouseX, mouseY);
+}
+
+function triggerLevyEvent(x, y) {
+  let centerCol = constrain(floor(x / colWidth), 0, cols - 1);
+
+  // paso de Lévy: casi siempre pequeño, ocasionalmente enorme
+  // (distribución de cola pesada, clásica de Lévy flight)
+  let alpha = 1.5;
+  let magnitude = pow(random(0.001, 1), -1 / alpha);
+  magnitude = constrain(magnitude, 10, 220);
+  let direction = random() < 0.5 ? 1 : -1;
+
+  // afecta un rango de columnas alrededor del click, decayendo con la distancia
+  let spread = 10;
+  for (let i = -spread; i <= spread; i++) {
+    let idx = centerCol + i;
+    if (idx < 0 || idx >= cols) continue;
+    let falloff = 1 - abs(i) / spread;
+    surfaceHeight[idx] += direction * magnitude * falloff * random(0.3, 1);
+    surfaceHeight[idx] = max(surfaceHeight[idx], 2);
+  }
+
+  // esto también puede torcer la tendencia futura: un evento raro
+  // "descubre territorio nuevo" y reorienta el sesgo consolidado.
+  driftBias = constrain(driftBias + direction * random(0.3, 0.8), -1, 1);
+
+  // ráfaga de partículas emitidas desde el punto de fractura
+  for (let i = 0; i < 40; i++) {
+    let a = random(TWO_PI);
+    let sp = random(1, 6);
+    particles.push({
+      pos: createVector(x, y),
+      vx: cos(a) * sp,
+      speed: abs(sin(a) * sp) + 0.6,
+      col: floor(random(PALETTE.length)),
+      settled: false,
+    });
+  }
+
+  flashEvents.push({ x, y, r: 6, alpha: 255 });
+}
+
+function drawFlashEvents() {
+  for (let i = flashEvents.length - 1; i >= 0; i--) {
+    let f = flashEvents[i];
+    noFill();
+    stroke(230, 200, 150, f.alpha);
+    strokeWeight(2);
+    circle(f.x, f.y, f.r);
+    f.r += 6;
+    f.alpha -= 10;
+    if (f.alpha <= 0) flashEvents.splice(i, 1);
+  }
+  noStroke();
+}
+
+// =====================================================================
+// CICLO: PAUSA -> SCROLL HASTA NEGRO -> REINICIO
+// =====================================================================
+
+function startReset() {
+  state = 'resetting';
+  particles = [];       // se congela todo: nada sigue cayendo
+  resetScrolled = 0;
+}
+
+function doResetStep() {
+  let shift = RESET_SHIFT;
+  terrain.copy(0, shift, W, H - shift, 0, 0, W, H - shift);
+  terrain.noStroke();
+  terrain.fill(10, 8, 6);
+  terrain.rect(0, H - shift, W, shift);
+  resetScrolled += shift;
+
+  if (resetScrolled >= H) {
+    // ya quedó completamente negro: reinicia el ciclo desde cero
+    terrain.background(10, 8, 6);
+    for (let i = 0; i < cols; i++) surfaceHeight[i] = random(6, 14);
+    driftBias = 0;
+    biasStrength = 0;
+    state = 'running';
+  }
+}
+
+// =====================================================================
+// UTILIDAD
+// =====================================================================
+
+function mouseIsInsideCanvas() {
+  return mouseX >= 0 && mouseX <= W && mouseY >= 0 && mouseY <= H;
+}
+```
+Style.css:
+```js
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #0a0806;
+}
+
+main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+}
+
+canvas {
+  display: block;
+  /* la sombra ayuda a que el "marco" 9:16 se lea como una pieza,
+     incluso cuando la pantalla real tiene otra proporción */
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.6);
+}
+```
+
+- Enlace al prototipo: [Prototipo en P5.js](https://editor.p5js.org/SantiagoMateus18/sketches/tOxnf-Rwz)
 - Reflexion final:
 
 ---
