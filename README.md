@@ -26,8 +26,6 @@ El curso busca desarrollar competencias para la **construcción de aplicaciones 
 | Unidad 7 | Biblioteca de físicas | 🔲 Pendiente | [ir a la carpeta](./unidad-7) |
 | Unidad 8 | Reto final e integración | 🔲 Pendiente | [ir a la carpeta](./unidad-8) |
 
-> Actualiza el estado de cada unidad (🔲 Pendiente / 🟡 En proceso / ✅ Completada) a medida que avances.
-
 ---
 
 ## 📝 Bitácora por unidad
@@ -52,10 +50,6 @@ El curso busca desarrollar competencias para la **construcción de aplicaciones 
 - Resultado final:
 - Enlace al prototipo:
 - Reflexión final:
-
----
-
-*(Copia esta plantilla de 4 sesiones para cada una de las unidades 2 a 8 a medida que avanza el curso)*
 
 ---
 
