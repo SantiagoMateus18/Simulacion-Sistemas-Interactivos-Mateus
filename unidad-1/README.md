@@ -1,43 +1,65 @@
-Unidad 1: Aleatoriedad
+# Unidad 1: Aleatoriedad
 
 Bitácora de trabajo de la Unidad 1 del curso de Simulación.
 
-Sesión 1 - Exploración y conceptos
-Referentes revisados: Ejemplos clásicos de The Nature of Code (Daniel Shiffman) sobre random walk (caminata aleatoria) y distribución gaussiana (randomGaussian).
-Conceptos clave:
-Caminata aleatoria (random walk): un objeto se mueve paso a paso en direcciones elegidas al azar, acumulando su posición a lo largo del tiempo.
-Distribución normal / gaussiana: valores que se concentran alrededor de una media, con una dispersión (desviación estándar) controlable.
-Ruido Perlin: a diferencia del random puro, genera valores que cambian suavemente en el tiempo o el espacio (útil para texturas orgánicas y tendencias que no "saltan").
-Lévy flight: un tipo de caminata aleatoria donde la mayoría de los pasos son pequeños, pero ocasionalmente ocurre un salto enorme (distribución de cola pesada) — modela eventos raros/excepcionales.
+## Sesión 1 - Exploración y conceptos
 
-Reflexión: Estos modelos me sirven como la base para generar cosas a futuro. Son como los esqueletos de toda una experiencia artística generativa.
+- **Referentes revisados:** Ejemplos clásicos de *The Nature of Code* (Daniel Shiffman) sobre random walk (caminata aleatoria) y distribución gaussiana (`randomGaussian`).
+- **Conceptos clave:**
+  - **Caminata aleatoria (random walk):** un objeto se mueve paso a paso en direcciones elegidas al azar, acumulando su posición a lo largo del tiempo.
+  - **Distribución normal / gaussiana:** valores que se concentran alrededor de una media, con una dispersión (desviación estándar) controlable.
+  - **Ruido Perlin:** a diferencia del random puro, genera valores que cambian suavemente en el tiempo o el espacio (útil para texturas orgánicas y tendencias que no "saltan").
+  - **Lévy flight:** un tipo de caminata aleatoria donde la mayoría de los pasos son pequeños, pero ocasionalmente ocurre un salto enorme (distribución de cola pesada) — modela eventos raros/excepcionales.
+- **Reflexión:** `Estos modelos me sirven como la base para generar cosas a futuro. Son como los esqueletos de toda una experiencia artística generativa. xd`.
 
-Sesión 2 - Ejercicios guiados
+## Sesión 2 - Ejercicios guiados
 
 Antes de construir el reto final, hice una serie de experimentos pequeños para entender cada concepto por separado, con ayuda de IA generativa (ver sección de uso de IA más abajo). El orden fue:
 
-Random walk básico con un objeto (Walker): un punto que se mueve pixel a pixel en 4 direcciones (arriba/abajo/izquierda/derecha), elegidas con floor(random(4)).
-Cambio de figura: reemplacé circle()/stroke() por triangle(), lo que me hizo entender que esta función necesita 6 argumentos (3 vértices), no 2 — mi primer error fue justamente no pasarle las coordenadas completas.
-Sesgo direccional: modifiqué las probabilidades del step() para que dos de los 4 "casos" movieran hacia la derecha en vez de repartir la izquierda/derecha/arriba/abajo por igual — esto hizo que el walker "derivara" con una tendencia, en vez de moverse simétricamente.
-Wraparound (mundo toroidal): agregué if (this.x > width) this.x = 0; para que el objeto reaparezca del lado opuesto al salir del canvas, en vez de perderse fuera de pantalla.
-Combiné random walk + distribución gaussiana: en vez de que la gaussiana esté centrada en un punto fijo (randomGaussian(320, 60)), hice que el centro de la distribución (mx, my) se mueva con un random walk — así la "nube" de puntos migra por el canvas en vez de quedar fija.
-Rotación: usé translate() + rotate() + push()/pop() para que la nube gaussiana tuviera forma elíptica (distinta desviación estándar en X y en Y) y rotara sobre su propio centro con el tiempo.
-Color y transparencia: experimenté con fill(r,g,b,alpha) y noStroke() para lograr el efecto de "densidad acumulada" — muchas figuras semi-transparentes superpuestas generan zonas más opacas donde cae más "sedimento" y zonas más tenues donde cae menos.
+1. **Random walk básico con un objeto (`Walker`):** un punto que se mueve pixel a pixel en 4 direcciones (arriba/abajo/izquierda/derecha), elegidas con `floor(random(4))`.
+2. **Cambio de figura:** reemplacé `circle()`/`stroke()` por `triangle()`, lo que me hizo entender que esta función necesita 6 argumentos (3 vértices), no 2 — mi primer error fue justamente no pasarle las coordenadas completas.
+3. **Sesgo direccional:** modifiqué las probabilidades del `step()` para que dos de los 4 "casos" movieran hacia la derecha en vez de repartir la izquierda/derecha/arriba/abajo por igual — esto hizo que el walker "derivara" con una tendencia, en vez de moverse simétricamente.
+4. **Wraparound (mundo toroidal):** agregué `if (this.x > width) this.x = 0;` para que el objeto reaparezca del lado opuesto al salir del canvas, en vez de perderse fuera de pantalla.
+5. **Combiné random walk + distribución gaussiana:** en vez de que la gaussiana esté centrada en un punto fijo (`randomGaussian(320, 60)`), hice que el *centro* de la distribución (`mx`, `my`) se mueva con un random walk — así la "nube" de puntos migra por el canvas en vez de quedar fija.
+6. **Rotación:** usé `translate()` + `rotate()` + `push()`/`pop()` para que la nube gaussiana tuviera forma elíptica (distinta desviación estándar en X y en Y) y rotara sobre su propio centro con el tiempo.
+7. **Color y transparencia:** experimenté con `fill(r,g,b,alpha)` y `noStroke()` para lograr el efecto de "densidad acumulada" — muchas figuras semi-transparentes superpuestas generan zonas más opacas donde cae más "sedimento" y zonas más tenues donde cae menos.
 
-Dificultades:
-Confundí stroke() con triangle() al copiar mal la sintaxis — aprendí que cada función de dibujo en p5.js tiene su propia cantidad de argumentos y no son intercambiables.
-Al principio no entendía por qué la gaussiana "saltaba" a una posición nueva en cada frame sin memoria del frame anterior — la diferencia clave entre una variable local (se recrea cada draw()) y una variable de estado que persiste (this.x en una clase, o una variable global).
+- **Dificultades:**
+  - Confundí `stroke()` con `triangle()` al copiar mal la sintaxis — aprendí que cada función de dibujo en p5.js tiene su propia cantidad de argumentos y no son intercambiables.
+  - Al principio no entendía por qué la gaussiana "saltaba" a una posición nueva en cada frame sin memoria del frame anterior — la diferencia clave entre una variable local (se recrea cada `draw()`) y una variable de estado que persiste (`this.x` en una clase, o una variable global).
+  - `[COMPLETAR: cualquier otra dificultad técnica específica que tuviste — por ejemplo, algún bug de coordenadas, de rendimiento, o de comprensión de algún concepto]`
+- **Soluciones:**
+  - Verificar siempre la documentación de p5.js para la cantidad de argumentos de cada función de dibujo.
+  - Sacar variables de posición a nivel de clase o global cuando necesito que persistan entre frames, en vez de declararlas dentro de `draw()`.
+  - `[COMPLETAR: otras soluciones propias]`
 
-Soluciones:
-Verificar siempre la documentación de p5.js para la cantidad de argumentos de cada función de dibujo.
-Sacar variables de posición a nivel de clase o global cuando necesito que persistan entre frames, en vez de declararlas dentro de draw().
+## Sesión 3 - Planteamiento del reto de diseño
 
-## Sesion 3 - Planteamiento del reto de diseno
-
-- Idea del reto:
-- Bocetos / referencias:
+- **Idea del reto:** "Navegar la incertidumbre" — en vez de simular tierra de forma literal, simular *procesos* geológicos (sedimentación, erosión, fractura) como sistema visual continuo, donde los 5 momentos de la unidad (posibilidad, tendencia, normalidad, excepción, influencia) coexisten todo el tiempo como capas del mismo sistema, en vez de estar separados en escenas distintas.
+- **Bocetos / referencias:** Los experimentos de la Sesión 2 (walker con sesgo, wraparound, nube gaussiana rotante, transparencia acumulativa) funcionaron como boceto conceptual y técnico directo para el sketch final: cada pieza pequeña que probé se integró luego en una función específica del reto.
 
 ## Sesion 4 - Evaluacion y presentacion
+
+| Momento | Comportamiento en el sistema |
+|---|---|
+| **Posibilidad** | Cada partícula de sedimento nace con un movimiento horizontal totalmente aleatorio (`random(-1, 1)` en `updateParticle`), sin dirección dominante. |
+| **Tendencia** | Un sesgo direccional (`driftBias`) generado con ruido Perlin (`noise(frameCount * 0.0015)`) se mezcla gradualmente con el azar puro mediante `lerp()`; `biasStrength` crece muy lento (de 0 a 0.85) para que la tendencia se consolide sin saltos bruscos. |
+| **Normalidad** | Cada 90 frames, `smoothTowardsMean()` empuja cada columna del terreno hacia el promedio general, con una perturbación gaussiana (`randomGaussian(0, 0.6)`) — el terreno tiende a un perfil "normal", parejo. |
+| **Excepción** | Un click dispara `triggerLevyEvent()`: un salto tipo Lévy flight, con distribución de cola pesada (`pow(random(0.001,1), -1/alpha)`), casi siempre pequeño pero ocasionalmente enorme — una fractura repentina del terreno. |
+| **Influencia** | La cercanía del mouse curva la trayectoria de las partículas (`influenceRadius`) — no las controla, las inclina probabilísticamente hacia o en contra de su posición. |
+
+### Sistema generativo
+
+- **Caminata aleatoria:** ajusta la velocidad horizontal de cada partícula frame a frame.
+- **Distribución normal:** usada en `smoothTowardsMean()` para suavizar el terreno hacia un promedio.
+- **Ruido Perlin:** controla la tendencia direccional (`driftBias`) y el bamboleo visual de cada depósito (`wob`), dando textura orgánica.
+- **Lévy flight:** genera los eventos de excepción con saltos de magnitud mayormente pequeña pero ocasionalmente extrema.
+- 
+### Identidad visual
+
+- **Paleta:** tonos cálidos y minerales (marrones, ocres, arenas), evocando estratos de tierra.
+- **Textura:** orgánica y acumulativa, con leve distorsión de ruido en cada depósito.
+- **Ritmo:** lento y "geológico" en la acumulación normal, interrumpido por destellos abruptos en los eventos de excepción.
 
 ### - Resultado final:
 Sketch:
@@ -391,6 +413,21 @@ canvas {
 - Enlace al prototipo: [Prototipo en P5.js](https://editor.p5js.org/SantiagoMateus18/sketches/tOxnf-Rwz)
 - Reflexion final:
 
+## Uso dado a la IA generativa
+
+Usé IA generativa (Claude) como herramienta de exploración conceptual y depuración de código durante la Sesión 2, antes de construir el sketch final. El proceso documentado fue:
+
+1. Empecé con un ejemplo base de *The Nature of Code* (un `Walker` con `stroke()`/`line()` y random walk de 4 direcciones).
+2. Le pedí ayuda para reemplazar el dibujo por `triangle()` — la IA me explicó que esta función requiere 6 argumentos (3 vértices) y no 2, y me mostró cómo derivarlos a partir de un punto central y un "tamaño".
+3. Pregunté cómo sesgar el random walk hacia una dirección — la IA propuso dos enfoques: duplicar un caso en el `if/else` (solución simple) o usar umbrales de probabilidad con `random(1)` (solución más flexible y escalable). **Decisión:** usé el enfoque de duplicar el caso, por simplicidad, entendiendo el trade-off de flexibilidad que eso implica.
+4. Pedí agregar wraparound (mundo toroidal) — la IA propuso el chequeo `if (this.x > width) this.x = 0`, y señaló que también hacía falta cubrirlo en el eje Y, lo cual yo no había contemplado.
+5. Pregunté cómo mover globalmente una nube de puntos generada con `randomGaussian` — la IA me explicó la diferencia entre una variable local (se recrea cada frame) y una variable de estado persistente, y propuso mover el *centro* de la distribución con un random walk en vez de mover cada punto individualmente.
+6. Pedí que la nube rotara — la IA propuso usar `translate()` + `rotate()` + `push()`/`pop()`, con distintas desviaciones estándar en X e Y para lograr una forma elíptica que rota.
+7. Pregunté cómo cambiar de círculos a triángulos dentro de ese sistema rotado, y luego cómo manejar color y transparencia con `fill()`/`noStroke()`/`stroke()`.
+
+**Cambios realizados sobre las propuestas de la IA:** `[COMPLETAR: acá documentá específicamente qué tomaste tal cual y qué modificaste — por ejemplo, si cambiaste los valores numéricos que la IA sugirió (tamaños, velocidades, colores de la paleta), si renombraste variables, si combinaste ideas de formas distintas a como se propusieron, o si tu sketch final (Reto 07) usa una arquitectura de partículas con objetos que vos estructuraste distinto a los ejemplos simples de la sesión de exploración]`.
+
+Es importante notar que el sketch final del Reto 07 (sistema de partículas, terreno acumulativo, Lévy flight, ciclo de reinicio) es una elaboración propia mucho más compleja que los ejercicios de exploración — estos últimos sirvieron como base conceptual y de sintaxis, no como código copiado directamente.
 ---
 
 [Volver a la bitacora principal](../README.md)
