@@ -423,7 +423,18 @@ Usé IA generativa (Claude) como herramienta de exploración conceptual y depura
 6. Pedí que la nube rotara — la IA propuso usar `translate()` + `rotate()` + `push()`/`pop()`, con distintas desviaciones estándar en X e Y para lograr una forma elíptica que rota.
 7. Pregunté cómo cambiar de círculos a triángulos dentro de ese sistema rotado, y luego cómo manejar color y transparencia con `fill()`/`noStroke()`/`stroke()`.
 
-**Cambios realizados sobre las propuestas de la IA:** `[COMPLETAR: acá documentá específicamente qué tomaste tal cual y qué modificaste — por ejemplo, si cambiaste los valores numéricos que la IA sugirió (tamaños, velocidades, colores de la paleta), si renombraste variables, si combinaste ideas de formas distintas a como se propusieron, o si tu sketch final (Reto 07) usa una arquitectura de partículas con objetos que vos estructuraste distinto a los ejemplos simples de la sesión de exploración]`.
+**Cambios realizados sobre las propuestas de la IA:** 
+1. Estructura inicial del sketch
+Después de decidir el tema (sedimentación/terreno) y los 5 momentos, le pedí que tradujera esas ideas a un sketch funcional con click como interacción principal (el disparador del momento de "Excepción").
+
+2. Corrección de un bug de crasheo
+Al probar el sketch, la consola arrojó un error cuando el terreno crecía demasiado. Le compartí el error y le pedí que lo solucionara; identificamos que era un problema de índices negativos en el arreglo de colores al hacer scroll, y se corrigió.
+
+3. Ajuste del ritmo visual
+Noté que el crecimiento del terreno y el ciclo de colores se sentían muy lentos, así que pedí ajustar las variables de ritmo (cantidad de partículas, velocidad de depósito, grosor de las capas de color) para que la pieza se sintiera más viva.
+
+4. Rediseño del ciclo de reinicio
+Decidí que, en vez de un scroll infinito continuo, quería que el sistema tuviera un ciclo más marcado: al llegar a cierto punto, todo se congela (nada cae, nada se genera), la pantalla se desplaza hasta quedar en negro total, y ahí reinicia desde cero. Le pedí implementar esa lógica de estados (running / resetting) y revertir los ajustes de ritmo anteriores a sus valores originales.
 
 Es importante notar que el sketch final del Reto 07 (sistema de partículas, terreno acumulativo, Lévy flight, ciclo de reinicio) es una elaboración propia mucho más compleja que los ejercicios de exploración — estos últimos sirvieron como base conceptual y de sintaxis, no como código copiado directamente.
 ---
