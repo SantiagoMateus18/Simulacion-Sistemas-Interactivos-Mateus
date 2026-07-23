@@ -27,11 +27,9 @@ Antes de construir el reto final, hice una serie de experimentos pequeños para 
 - **Dificultades:**
   - Confundí `stroke()` con `triangle()` al copiar mal la sintaxis — aprendí que cada función de dibujo en p5.js tiene su propia cantidad de argumentos y no son intercambiables.
   - Al principio no entendía por qué la gaussiana "saltaba" a una posición nueva en cada frame sin memoria del frame anterior — la diferencia clave entre una variable local (se recrea cada `draw()`) y una variable de estado que persiste (`this.x` en una clase, o una variable global).
-  - `[COMPLETAR: cualquier otra dificultad técnica específica que tuviste — por ejemplo, algún bug de coordenadas, de rendimiento, o de comprensión de algún concepto]`
 - **Soluciones:**
   - Verificar siempre la documentación de p5.js para la cantidad de argumentos de cada función de dibujo.
   - Sacar variables de posición a nivel de clase o global cuando necesito que persistan entre frames, en vez de declararlas dentro de `draw()`.
-  - `[COMPLETAR: otras soluciones propias]`
 
 ## Sesión 3 - Planteamiento del reto de diseño
 
