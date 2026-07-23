@@ -1,18 +1,36 @@
-# Unidad 1: Aleatoriedad
+Unidad 1: Aleatoriedad
 
-Bitacora de trabajo de la Unidad 1 del curso de Simulacion.
+Bitácora de trabajo de la Unidad 1 del curso de Simulación.
 
-## Sesion 1 - Exploracion y conceptos
+Sesión 1 - Exploración y conceptos
+Referentes revisados: Ejemplos clásicos de The Nature of Code (Daniel Shiffman) sobre random walk (caminata aleatoria) y distribución gaussiana (randomGaussian).
+Conceptos clave:
+Caminata aleatoria (random walk): un objeto se mueve paso a paso en direcciones elegidas al azar, acumulando su posición a lo largo del tiempo.
+Distribución normal / gaussiana: valores que se concentran alrededor de una media, con una dispersión (desviación estándar) controlable.
+Ruido Perlin: a diferencia del random puro, genera valores que cambian suavemente en el tiempo o el espacio (útil para texturas orgánicas y tendencias que no "saltan").
+Lévy flight: un tipo de caminata aleatoria donde la mayoría de los pasos son pequeños, pero ocasionalmente ocurre un salto enorme (distribución de cola pesada) — modela eventos raros/excepcionales.
 
-- Referentes revisados:
-- Conceptos clave:
-- Reflexion:
+Reflexión: Estos modelos me sirven como la base para generar cosas a futuro. Son como los esqueletos de toda una experiencia artística generativa.
 
-## Sesion 2 - Ejercicios guiados
+Sesión 2 - Ejercicios guiados
 
-- Que hice:
-- Dificultades:
-- Soluciones:
+Antes de construir el reto final, hice una serie de experimentos pequeños para entender cada concepto por separado, con ayuda de IA generativa (ver sección de uso de IA más abajo). El orden fue:
+
+Random walk básico con un objeto (Walker): un punto que se mueve pixel a pixel en 4 direcciones (arriba/abajo/izquierda/derecha), elegidas con floor(random(4)).
+Cambio de figura: reemplacé circle()/stroke() por triangle(), lo que me hizo entender que esta función necesita 6 argumentos (3 vértices), no 2 — mi primer error fue justamente no pasarle las coordenadas completas.
+Sesgo direccional: modifiqué las probabilidades del step() para que dos de los 4 "casos" movieran hacia la derecha en vez de repartir la izquierda/derecha/arriba/abajo por igual — esto hizo que el walker "derivara" con una tendencia, en vez de moverse simétricamente.
+Wraparound (mundo toroidal): agregué if (this.x > width) this.x = 0; para que el objeto reaparezca del lado opuesto al salir del canvas, en vez de perderse fuera de pantalla.
+Combiné random walk + distribución gaussiana: en vez de que la gaussiana esté centrada en un punto fijo (randomGaussian(320, 60)), hice que el centro de la distribución (mx, my) se mueva con un random walk — así la "nube" de puntos migra por el canvas en vez de quedar fija.
+Rotación: usé translate() + rotate() + push()/pop() para que la nube gaussiana tuviera forma elíptica (distinta desviación estándar en X y en Y) y rotara sobre su propio centro con el tiempo.
+Color y transparencia: experimenté con fill(r,g,b,alpha) y noStroke() para lograr el efecto de "densidad acumulada" — muchas figuras semi-transparentes superpuestas generan zonas más opacas donde cae más "sedimento" y zonas más tenues donde cae menos.
+
+Dificultades:
+Confundí stroke() con triangle() al copiar mal la sintaxis — aprendí que cada función de dibujo en p5.js tiene su propia cantidad de argumentos y no son intercambiables.
+Al principio no entendía por qué la gaussiana "saltaba" a una posición nueva en cada frame sin memoria del frame anterior — la diferencia clave entre una variable local (se recrea cada draw()) y una variable de estado que persiste (this.x en una clase, o una variable global).
+
+Soluciones:
+Verificar siempre la documentación de p5.js para la cantidad de argumentos de cada función de dibujo.
+Sacar variables de posición a nivel de clase o global cuando necesito que persistan entre frames, en vez de declararlas dentro de draw().
 
 ## Sesion 3 - Planteamiento del reto de diseno
 
