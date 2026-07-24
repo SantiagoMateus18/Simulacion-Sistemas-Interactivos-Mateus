@@ -435,8 +435,14 @@ Noté que el crecimiento del terreno y el ciclo de colores se sentían muy lento
 
 4. Rediseño del ciclo de reinicio
 Decidí que, en vez de un scroll infinito continuo, quería que el sistema tuviera un ciclo más marcado: al llegar a cierto punto, todo se congela (nada cae, nada se genera), la pantalla se desplaza hasta quedar en negro total, y ahí reinicia desde cero. Le pedí implementar esa lógica de estados (running / resetting) y revertir los ajustes de ritmo anteriores a sus valores originales.
-
-Es importante notar que el sketch final del Reto 07 (sistema de partículas, terreno acumulativo, Lévy flight, ciclo de reinicio) es una elaboración propia mucho más compleja que los ejercicios de exploración — estos últimos sirvieron como base conceptual y de sintaxis, no como código copiado directamente.
 ---
+
+| Criterio | Cumplo | No cumplo | Evidencia |
+|---|---|---|---|
+| **Encargo completo:** interpreto los cinco momentos dentro de un mismo sistema visual. | ✅ | | Los 5 momentos (Posibilidad, Tendencia, Normalidad, Excepción, Influencia) coexisten en un solo sketch (`sketch.js`), no en escenas separadas: por ejemplo `randomWalkStep` (posibilidad), `driftBias`/`biasStrength` (tendencia), `smoothTowardsMean()` (normalidad), `triggerLevyEvent()` (excepción) e `influenceRadius` (influencia) actúan todos simultáneamente sobre el mismo terreno. |
+| **Simulación con intención:** utilizo al menos tres conceptos de la unidad para comunicar las ideas del encargo. | ✅ | | Se combinan 4 conceptos: caminata aleatoria (`random(-1,1)`), ruido Perlin (`noise()` en `driftBias`), distribución normal (`randomGaussian()` en `smoothTowardsMean()`) y Lévy flight (`pow(random(...),-1/alpha)` en `triggerLevyEvent()`), cada uno con un rol distinto y justificado en la metáfora de sedimentación. |
+| **Interacción significativa:** la interacción modifica el comportamiento o las probabilidades del sistema, que también funciona sin intervención. | ✅ | | El mouse inclina la probabilidad de caída (`influence` en `updateParticle`) y el click dispara el evento de excepción (`triggerLevyEvent`), modificando reglas internas, no solo la apariencia. El sistema sigue generando y depositando partículas aunque nadie interactúe (`spawnParticle` corre cada frame). |
+| **Prototipo funcional:** la experiencia puede ejecutarse y recorrerse completa sin errores que impidan comprenderla. | ✅ | | Se identificó y corrigió un bug de crash (índice negativo en `PALETTE`) reportado en consola, y se implementó el ciclo completo pausa → scroll a negro → reinicio (`startReset()`, `doResetStep()`) sin errores posteriores. |
+| **Proceso documentado:** la bitácora evidencia avances, decisiones, dificultades, soluciones, uso de IA y enlace al prototipo. | ✅ | | La bitácora (`README.md` + carpeta `unidad-1`) documenta el planteamiento del tema, la iteración sobre el bug, los ajustes de ritmo, la decisión de cambiar el scroll infinito por el ciclo de reinicio, y la sección "Cambios realizados a propuestas de IA" con el detalle de cada petición hecha a Claude. |
 
 [Volver a la bitacora principal](../README.md)
