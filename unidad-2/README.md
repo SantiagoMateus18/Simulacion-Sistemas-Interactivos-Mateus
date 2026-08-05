@@ -30,7 +30,7 @@ Bitacora de trabajo de la Unidad 2 del curso de Simulacion.
 | Experimenté, comparé, seleccioné y descarté con criterios claros. | 10% | Si experimenté. Las primeras versiones no generaban lo que yo quería genuinamente mostrar. | 5 |
 | Puedo distinguir y sustentar lo diseñado y lo emergente. | 10% | Puedo distinguir y sustentar la idea de diseño central. | 5 |
 | **Total** | **100%** | | 4.6 |
-
 ---
+[Proyecto](https://editor.p5js.org/SantiagoMateus18/sketches/nxUcDoDJE)
 
 [Volver a la bitacora principal](../README.md)
