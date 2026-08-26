@@ -1,6 +1,6 @@
 # Unidad 3: Fuerzas
 
-[Link local](http://localhost:5173/)
+[Link publico](https://santiagomateus18.github.io/Tutienesalgoquememataquemequemapordentro/)
 # Bitácora del instrumento de partículas
 
 **Unidad:** U3 · Forces Instrument  
