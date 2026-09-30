@@ -83,9 +83,11 @@ Cada criterio vale 25 puntos. Dejo el puntaje pendiente para completarlo despué
 
 | Criterio | Puntaje / 25 | Evidencia que debo comprobar |
 | --- | ---: | --- |
-| Cumplimiento del encargo: interpreta el guion y funciona en pantalla completa. | Pendiente | Recorrer los 13 momentos y probar pantalla completa en el equipo de presentación. |
-| Relaciones estructurales: puedo explicar qué relaciones organizan los elementos y qué significan. | Pendiente | Explicar la separación, propagación, aproximación e integración de los grupos. |
-| Comportamiento y significado: relaciono los cambios de movimiento y composición con una intención comunicativa. | Pendiente | Justificar al menos una transformación concreta de la secuencia. |
-| Explicación y demostración: presento la propuesta y puedo mostrar cómo construye sentido. | Pendiente | Ensayar el recorrido y la explicación del sistema funcionando. |
+| Cumplimiento del encargo: interpreta el guion y funciona en pantalla completa. | 25 | Recorrer los 13 momentos y probar pantalla completa en el equipo de presentación. |
+| Relaciones estructurales: puedo explicar qué relaciones organizan los elementos y qué significan. | 20 | Explicar la separación, propagación, aproximación e integración de los grupos. |
+| Comportamiento y significado: relaciono los cambios de movimiento y composición con una intención comunicativa. | 25 | Justificar al menos una transformación concreta de la secuencia. |
+| Explicación y demostración: presento la propuesta y puedo mostrar cómo construye sentido. | 25 | Ensayar el recorrido y la explicación del sistema funcionando. |
 
 **Pregunta que guía la unidad:** ¿Cómo puede una estructura de elementos relacionados y en movimiento convertirse en un lenguaje visual capaz de construir el significado de un discurso?
+
+[Volver a la bitacora principal](../README.md)
