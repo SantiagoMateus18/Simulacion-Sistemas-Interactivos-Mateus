@@ -29,4 +29,14 @@ Para romper con la rutina de una simulación pura, introduje un elemento estocá
 ### El prototipo inicial (Y por qué lo descarté)
 Empecé probando el modelo base de Kuramoto con esferas abstractas y tonos puros generados por código. Técnicamente funcionaba, pero **era frío y aburrido**. Los sonidos sonaban demasiado sintéticos y no había una narrativa clara que justificara por qué unos nodos se sincronizaban con otros.
 
+Aquí tienes una tabla lista para copiar y pegar:
+
+| Criterio de autoevaluación | Puntaje (0–25) | Evidencia o reflexión |
+| --- | ---: | --- |
+| Leí y verifiqué que mi proyecto cumple con los requisitos mínimos de la unidad. | 25 | Probé el proyecto y verifiqué que cumple los requisitos |
+| Puedo explicar claramente qué representa cada variable del modelo de Kuramoto en mi proyecto. | 25 | Puedo explicar qué representa cada variable del modelo |
+| Puedo explicar claramente cómo las variables del modelo producen el comportamiento observado en mi proyecto. | 25 | Observé cómo las variables modifican el comportamiento del sistema |
+| Puedo demostrar que mi proyecto cumple con los objetivos establecidos en la unidad. | 25 | La demostración muestra cómo el proyecto responde a los objetivos de la unidad |
+| **Total** | **100/100** | Nada mas xd |
+
 [Volver a la bitacora principal](../README.md)
