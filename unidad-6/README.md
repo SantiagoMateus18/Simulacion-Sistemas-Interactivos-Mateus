@@ -128,3 +128,5 @@ Cada criterio vale 25 puntos. Los puntajes siguientes son provisionales hasta co
 3. Medir rendimiento y legibilidad en el computador y la pantalla de presentación.
 4. Ajustar el score después de escuchar las entradas reales de la canción.
 5. Completar la reflexión y reemplazar los puntajes provisionales por una autoevaluación sustentada.
+
+[Volver a la bitacora principal](../README.md)
