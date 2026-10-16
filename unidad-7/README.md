@@ -1,65 +1,65 @@
 # Bitácora — Unidad 7: Word as a Playable System
 
-**Proyecto:** VANS — Off The Wall Sound  
+**Proyecto:** VANS — Infinite Playable Typography  
 **Autor:** Santiago Alejandro Mateus Arciniegas  
-**Tecnologías:** p5.js, Matter.js, Tone.js, HTML5/CSS3  
+**Tecnologías:** p5.js, HTML5/CSS3  
 
 ---
 
 ## 1. Intención Semántica e Identidad
 
-* **Empresa:** VANS (*footwear* y cultura urbana).
-* **Atributo a comunicar:** **Resiliencia Elástica y Expresión Alternativa (Rock/Skate)**. Vans no es solo un zapato; es la suela de goma que soporta los impactos del escenario, el moshpit y la tabla de skate.
-* **Público objetivo:** Músicos, skaters, jóvenes y seguidores de la escena alternativa (punk, emo, rock alternativo).
-* **Contexto de uso:** *Hero section* / Portada web interactiva para una campaña digital de la marca ("Off The Wall Sound").
+- **Empresa:** VANS (*footwear* y cultura urbana).
+- **Atributo a comunicar:** **esencia del skate**. La marca no es solo un rótulo que se lee, sino un entorno físico que se transita y se domina POR MEDIO DEL SKATEBOARDING
+- **Público objetivo:** Skaters, músicos, jóvenes y seguidores de la escena urbana y alternativa.
+- **Contexto de uso:** Minijuego arcade web / experiencia interactiva tipográfica para una campaña digital de VANS.
 
 ---
 
 ## 2. Referentes e Inspiración
 
-* **Ji Lee — *Word as Image*:** El concepto de que la estructura gráfica de la letra comunica directamente la función del objeto.
-* **Estética Cel Shading / Borderlands:** Contornos negros gruesos, colores planos (*pop-art*) y sombreado tipo cómic para reforzar el carácter caricaturesco de las letras.
-* **Multi-track Stem Players:** Inspiración en videojuegos musicales (*Rock Band*) para desglosar una canción (*All The Small Things*) en 4 canales independientes.
+- **La palabra como entorno arquitectónico:** Evolución del concepto *Word as Image*, llevando la tipografía a convertirse en un terreno transitable (pista de skate).
+- **Estética Cómic / Pop-Art (UI):** Interfaces planas con alto contraste (amarillo `#C4BE5D` y cyan `#47A8BD`), contornos negros gruesos y sombras ladeadas sólidas (`box-shadow` duro) que evocan viñetas de cómics underground.
+- **Arcades de precisión (OlliOlli / Tony Hawk 2D):** Mecánicas minimalistas centradas en el *timing* (saltos), la inercia y la superación de puntajes en lapsos muy cortos (15 segundos).
 
 ---
 
 ## 3. Diseño Gráfico y Tipográfico
 
-Las letras del nombre **V-A-N-S** fueron construidas como collages de instrumentos musicales específicos con transparencia en PNG:
+Las letras del nombre **V-A-N-S** dejaron de ser formas separadas para convertirse en un circuito unificado:
 
-* **V (Voz):** Formada por un ensamble de micrófonos de mano grises.
-* **A (Guitarras):** Estructurada mediante ensamble de guitarras eléctricas rojas.
-* **N (Bajo):** Compuesta por varios bajos eléctricos en tonos azules.
-* **S (Batería):** Curvada utilizando tambores de batería.
-
-**Ambiente visual:** Fondo estilo estudio fotográfico en tono rojo oscuro degradado con un patrón halftone (`#5a1e1e` a `#2a0b0b`) con sombra de piso en CSS y un panel flotante de interfaz estructurado como viñeta de cómic en contraste (amarillo y cyan).
+- **La Pista BOLD:** Construcción tipográfica masiva basada en el logotipo oficial. Trazos negros sólidos y extragruesos (`strokeWeight: 112`) sobre un fondo blanco puro. El techo de la letra "V" se extiende cubriendo "A-N-S", formando la estructura superior de la pista.
+- **Circuito Infinito:** Al finalizar la "S", una pista larga inferior (asfalto) conecta de regreso al inicio de la "V", creando un bucle cerrado ininterrumpido.
+- **Collage de Fondo:** Siluetas aleatorias de chicos haciendo skate y tocando guitarra eléctrica. Se renderizan como sombras translúcidas (opacidad baja, teñidas de negro) dispersas dinámicamente por todo el lienzo blanco sin alterar el contraste principal.
+- **El Avatar:** Una tabla de skate gráfica con ruedas y el icónico óvalo de "Off The Wall" que aloja la palabra VANS.
 
 ---
 
 ## 4. Modelo Computacional y Reglas
 
-### Sistema Físico (Matter.js + p5.js)
-* **Cuerpos rígidos e impacto:** Cada letra posee un cuerpo físico rectangular con propiedades de fricción ($0.8$) y rebote/restitución ($0.7$).
-* **Squash & Stretch:** La escala visual se deforma dinámicamente en p5.js según la velocidad vertical ($v_y$), simulando la elasticidad de la goma vulcanizada.
-* **Límites cerrados:** Muros e infraestructuras invisibles de 500 px de grosor evitan que las letras salgan disparadas fuera del viewport.
+### Sistema Físico y de Cámara (p5.js puro)
+- **Cinemática sobre curvas:** Las letras se generaron mediante polilíneas, curvas de interpolación y suavizado de esquinas (algoritmo de Chaikin). La patineta calcula su ángulo dinámicamente según los puntos previos y siguientes de la ruta.
+- **Cámara Dinámica (Tracking):** La cámara sigue el eje X del jugador de forma estricta, mientras que en el eje Y hace un paneo suave (suavizado matemático) cuando la tabla desciende a la pista larga de retorno.
+- **Gravedad y Salto:** Un sistema de físicas lineal para el eje vertical controla la parábola del salto (fuerza de impulso vs. tracción gravitacional).
 
-### Sistema de Audio (Tone.js)
-* **Sincronización:** Las 4 pistas (*stems*) inician simultáneamente al dar clic en el overlay inicial, manteniéndose en bucle perfecto en segundo plano.
-* **Modulación por energía:** El volumen de cada pista decae progresivamente si la letra queda inactiva o abandona la interacción, y recupera su ganancia ($0\text{ dB}$) al ser manipulada o golpeada.
+### Mecánica de Juego (Score & Timer)
+- **Condición de tiempo:** El jugador tiene un temporizador estricto de **15 segundos** para recorrer la pista.
+- **Puntuación (Jump Score):** Se suma un punto cada vez que el jugador completa un salto (Ollie) exitoso mientras la tabla está en movimiento (velocidad mayor a 2).
+- **Game Over Loop:** Al llegar a cero, se muestra la puntuación final. El juego no tiene "muerte" física, permitiendo intentos infinitos al reiniciar.
 
 ### Interacción y Controles
-1. **Teclas `V`, `A`, `N`, `S`:** Funcionan como interruptores (*toggle*). Encienden/apagan la pista correspondiente y le aplican un impulso físico vertical.
-2. **Arrastre con Mouse:** Permite agarrar, lanzar y hacer rebotar cualquier letra en la escena.
-3. **Tecla `R` / Botón "Reset VANS":** Reorganiza las 4 letras instantáneamente a su posición original, alineación horizontal y rotación $0^\circ$.
-4. **Tecla `H`:** Oculta o muestra la interfaz de controles estilo cómic.
+1. **Flecha Derecha `→` / `D`:** Acelerar (aplica aceleración sumatoria hasta un límite de velocidad máxima).
+2. **Flecha Izquierda `←` / `A`:** Frenar y dar reversa.
+3. **Tecla `ESPACIO`:** Ejecutar un salto (*Ollie*) y sumar puntos al aterrizar.
+4. **Tecla `R` / Botón "Reiniciar":** Resetea la posición, velocidad, puntos y el cronómetro a 15 segundos sin recargar la página.
+5. **Tecla `H`:** Oculta o muestra la interfaz de controles estilo cómic para apreciar la pista limpia.
 
 ---
 
 ## 5. Pruebas y Resultados de Interacción
 
-* **Prueba de sincronización:** Se verificó que al activar múltiples letras en tiempos distintos no existen desfases de ritmo en la canción.
-* **Prueba física:** Las letras responden elásticamente al mouse y a los comandos de teclado sin atravesar paredes ni perder su forma original tras los impactos.
-* **Respuesta perceptiva:** Quienes interactúan con el sistema descubren que pueden "armar la mezcla" de la banda mientras juegan con la elasticidad de las letras.
+- **Prueba de Pista Continua:** Se verificó matemáticamente el cierre del bucle entre la letra "S" y la "V" inferior para evitar saltos bruscos en el movimiento de la patineta.
+- **Orientación del Objeto:** Se ajustó el cálculo de la rotación mediante `atan2` e interpolación, logrando que el skate haga un *flip* natural (cambio de dirección visual) cuando la pista hace un giro de 180 grados.
+- **Balance del Temporizador:** 15 segundos demostraron ser el tiempo óptimo para recorrer el logotipo al menos una vez a velocidad máxima, fomentando la repetición y la búsqueda de *high scores* mediante la barra espaciadora.
 
 ---
 
