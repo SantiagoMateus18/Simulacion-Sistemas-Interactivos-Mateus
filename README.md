@@ -28,35 +28,10 @@ El curso busca desarrollar competencias para la **construcción de aplicaciones 
 
 ---
 
-## 📝 Bitácora por unidad
-
-### Unidad 1: Aleatoriedad
-
-**Sesión 1 — Exploración y conceptos**
-- Referentes revisados:
-- Conceptos clave:
-- Reflexión:
-
-**Sesión 2 — Ejercicios guiados**
-- Qué hice:
-- Dificultades:
-- Soluciones:
-
-**Sesión 3 — Planteamiento del reto de diseño**
-- Idea del reto:
-- Bocetos / referencias:
-
-**Sesión 4 — Evaluación y presentación**
-- Resultado final:
-- Enlace al prototipo:
-- Reflexión final:
-
----
-
 ## ⚙️ Tecnologías
 
-- Lenguaje / librería:
-- Herramientas:
+- Lenguaje / librería: HTML, JavaScript.
+- Herramientas: Claude code, Codex, Visual Studio Code y Google One
 
 ## 👤 Autor
 
